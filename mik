@@ -116,7 +116,12 @@ if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
 // Instantiate the "ingest" progress bar based on the limit or the number of filter records.
 $climate = new League\CLImate\CLImate;
 if (!$onWindows && isset($limit)) {
-    $progress = $climate->progress()->total($limit);
+    if ($limit == 'cached') {
+        $progress = $climate->progress()->total($numFilteredRecs);
+    }
+    else {
+        $progress = $climate->progress()->total($limit);
+    }
 } elseif (!$onWindows) {
     $progress = $climate->progress()->total($numFilteredRecs);
 }

@@ -75,6 +75,23 @@ class Csv extends Fetcher
     */
     public function getRecords($limit = null)
     {
+        // If --limit is 'cached', use the cached version of each
+        // object's metadata at $this->settings['temp_directory'] .
+        // DIRECTORY_SEPARATOR . $pointer . '.metadata' and bypass
+        // reading the CSV file and all fetcher manipulators.
+        if ($limit == 'cached') {
+            $cache_directory = $this->settings['temp_directory'] . DIRECTORY_SEPARATOR;
+            $cached_records = glob("$cache_directory*.metadata");
+            $cached_records_count = count($cached_records);
+            print "Skipping fetch and using the $cached_records_count cached records in " .
+                $this->settings['temp_directory'] . "\n";
+            $filtered_records = array();
+            foreach ($cached_records as $record_path) {
+                $record = unserialize(file_get_contents($record_path));
+                $filtered_records[] = $record;
+            }
+            return $filtered_records;
+        }
 
         // Use a static cache to avoid reading the CSV file multiple times.
         static $filtered_records;
