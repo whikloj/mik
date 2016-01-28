@@ -57,9 +57,11 @@ On Windows, you'll need to run:
 
 ```php mik --config=foo.ini```
 
-The `--config` option is required, but you can also add a `--limit` option if you only want to create a specific number of import packages. This option is useful for testing. For example:
+The `--config` option is required, but you can also add a `--limit` option if you only want to create a specific number of import packages, or if you want to reprocess the same import packages that were created during mik's previous run. This option is useful for testing. For example:
 
 ```./mik --config=foo.ini --limit=10```
+
+```./mik --config=foo.ini --limit=cached```
 
 Once MIK starts running, it will display its progress:
 
