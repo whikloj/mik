@@ -92,16 +92,6 @@ class CdmNewspapers extends FileGetter
     }
 
     /**
-    * Return an array of records.
-    *
-    * @return array The records.
-    */
-    public function getRecords()
-    {
-        return array(1, 2, 3, 4, 5);
-    }
-
-    /**
      * Gets a compound item's children pointers. $alias needs to include the leading '/'.
      * @ToDo - clerify whether this method should be part of filegetters or fetchers.
      */
@@ -156,7 +146,7 @@ class CdmNewspapers extends FileGetter
         // Use a static cache to avoid building the source path list
         // multiple times.
         static $potentialFilesArray;
-        if (!isset($potentialFilesArray)) {s
+        if (!isset($potentialFilesArray)) {
             $potentialFilesArray = array();
             $iterator = new \RecursiveDirectoryIterator($pathToIssue);
             $display = $allowedFileTypes;
