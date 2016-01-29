@@ -156,8 +156,7 @@ class CdmNewspapers extends FileGetter
         // Use a static cache to avoid building the source path list
         // multiple times.
         static $potentialFilesArray;
-        if (!isset($potentialFilesArray)) {
-            var_dump("hi");
+        if (!isset($potentialFilesArray)) {s
             $potentialFilesArray = array();
             $iterator = new \RecursiveDirectoryIterator($pathToIssue);
             $display = $allowedFileTypes;
