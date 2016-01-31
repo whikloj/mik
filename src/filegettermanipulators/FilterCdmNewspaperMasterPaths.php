@@ -51,7 +51,7 @@ class FilterCdmNewspaperMasterPaths extends Filegettermanipulator
 
         if ($this->direction == 'out') {
             if (preg_match($pattern, $path)) {
-                $this->log->addError("FilterCdmNewspaperMasterPaths",
+                $this->log->addInfo("FilterCdmNewspaperMasterPaths",
                     array('Path has been removed from master file path list' => $path));
                 return false;
             }
@@ -61,7 +61,7 @@ class FilterCdmNewspaperMasterPaths extends Filegettermanipulator
         }
         elseif ($this->direction == 'in') {
             if (preg_match($pattern, $path)) {
-                $this->log->addError("FilterCdmNewspaperMasterPaths",
+                $this->log->addInfo("FilterCdmNewspaperMasterPaths",
                     array('Path has been added to master file path list' => $path));
                 return true;
             }
