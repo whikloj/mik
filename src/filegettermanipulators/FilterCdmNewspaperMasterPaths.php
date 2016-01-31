@@ -42,8 +42,9 @@ class FilterCdmNewspaperMasterPaths extends Filegettermanipulator
      * @param $path string
      *    A file path to test.
      *
-     * @return mixed
-     *    An array of possible file paths, or false if none can be genreated.
+     * @return bool
+     *    True if the path should be included in the list of master file
+     *    paths, false if not.
      */
     public function filterMasterFilePath($path)
     {
