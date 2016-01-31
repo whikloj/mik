@@ -25,11 +25,25 @@ abstract class Filegettermanipulator
     }
 
     /**
-     * Get the path to the master file.
+     * Generates possible filepaths for master files.
      *
-     * @return string
-     *     A full path to the master file.
+     * @return mixed
+     *    An array of possible file paths, or false if none can be genreated.
      */
-    abstract public function getMasterFilePaths();
+    public function getMasterFilePaths()
+    {
+    }
+
+    /**
+     * Tests filepath for master file to see if it matches parmaterized patterns.
+     *
+     * @return bool
+     *    True if it is to be included in the list of all valid
+     *    paths, false if the path is not to be included.
+     */
+    public function filterMasterFilePath($path)
+    {
+    }
+
 
 }

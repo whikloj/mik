@@ -38,6 +38,12 @@ class CdmNewspapers extends FileGetter
      */
     public $alias;
 
+   /**
+     * @var array $filegettermanipulators - array of filegettermanipulors from config.
+     *   array values will be of the form filegettermanipulator_class_name|param_0
+     */
+    public $filegettermanipulators;
+
     /**
      * @var object $thumbnail - filemanipulators class for helping
      * create thumbnails from CDM
@@ -58,6 +64,7 @@ class CdmNewspapers extends FileGetter
     public function __construct($settings)
     {
         $this->settings = $settings['FILE_GETTER'];
+        $this->all_settings = $settings;
         $this->utilsUrl = $this->settings['utils_url'];
         $this->alias = $this->settings['alias'];
 
@@ -71,6 +78,12 @@ class CdmNewspapers extends FileGetter
         }
 
         $this->inputDirectories = $this->settings['input_directories'];
+
+        if (isset($settings['MANIPULATORS']['filegettermanipulators'])) {
+            $this->filegettermanipulators = $settings['MANIPULATORS']['filegettermanipulators'];
+        } else {
+            $this->filegettermanipulators = array();
+        }
 
         // Interate over inputDirectories to create $potentialObjFiles array.
         $potentialObjFiles = array();
@@ -153,10 +166,28 @@ class CdmNewspapers extends FileGetter
             $iteratorIterator = new \RecursiveIteratorIterator($iterator);
 
             foreach ($iteratorIterator as $file) {
-
                 $file_parts = explode('.', $file);
                 if (in_array(strtolower(array_pop($file_parts)), $display)) {
-                    $potentialFilesArray[] = $file->__toString();
+
+                    if (count($this->filegettermanipulators)) {
+                        foreach ($this->filegettermanipulators as $fmanipulator) {
+                            $filegettermanipulatorClassAndParams = explode('|', $fmanipulator);
+                            $filegettermanipulatorClassName = array_shift($filegettermanipulatorClassAndParams);
+                            $manipulatorParams = $filegettermanipulatorClassAndParams;
+                            $filegetterManipulatorClass = 'mik\\filegettermanipulators\\' .
+                                $filegettermanipulatorClassName;
+                            $filegettermanipulator = new $filegetterManipulatorClass($this->all_settings,
+                                $manipulatorParams, null);
+                            if ($filegettermanipulator->filterMasterFilePath($file->__toString())) {
+                                $potentialFilesArray[] = $file->__toString();
+                                var_dump($file->__toString());
+                            }
+                        }
+                    }
+                    else {
+                        $potentialFilesArray[] = $file->__toString();
+                    }
+
                 }
             }
         }
