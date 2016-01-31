@@ -48,7 +48,6 @@ class FilterCdmNewspaperMasterPaths extends Filegettermanipulator
     public function filterMasterFilePath($path)
     {
         $pattern = '#(' . $this->patterns . ')#i';
-        var_dump($pattern);
 
         if ($this->direction == 'out') {
             if (preg_match($pattern, $path)) {

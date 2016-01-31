@@ -180,7 +180,6 @@ class CdmNewspapers extends FileGetter
                                 $manipulatorParams, null);
                             if ($filegettermanipulator->filterMasterFilePath($file->__toString())) {
                                 $potentialFilesArray[] = $file->__toString();
-                                var_dump($file->__toString());
                             }
                         }
                     }
