@@ -2,10 +2,27 @@
 
 namespace mik\inputvalidators;
 
-class CsvInputValidatorsTest extends \PHPUnit_Framework_TestCase
+use mik\tests\MikTestBase;
+
+/**
+ * Class CsvInputValidatorsTest
+ * @package mik\inputvalidators
+ * @group inputvalidators
+ */
+class CsvInputValidatorsTest extends MikTestBase
 {
+    /**
+     * Path to validator log.
+     * @var string
+     */
+    private $path_to_input_validator_log;
+
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp()
     {
+        parent::setUp();
         $this->path_to_temp_dir = sys_get_temp_dir() . DIRECTORY_SEPARATOR . "mik_csv_input_validator_temp_dir";
         @mkdir($this->path_to_temp_dir);
         $this->path_to_log = $this->path_to_temp_dir . DIRECTORY_SEPARATOR . "mik.log";
@@ -13,14 +30,14 @@ class CsvInputValidatorsTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @group inputvalidators
+     * @covers \mik\inputvalidators\CsvSingleFile
      */
     public function testCsvSingleFileInputValidator()
     {
         $settings = array(
             'FETCHER' => array(
                 'use_cache' => false,
-                'input_file' => dirname(__FILE__) . '/assets/csv/inputvalidators/csvsinglefile/input.csv',
+                'input_file' => $this->asset_base_dir . '/csv/inputvalidators/csvsinglefile/input.csv',
                 'temp_directory' => $this->path_to_temp_dir,
                 'record_key' => 'ID',
             ),
@@ -28,7 +45,7 @@ class CsvInputValidatorsTest extends \PHPUnit_Framework_TestCase
                  'validate_input' => true,
                  'validate_input_type' => 'strict',
                  'class' => 'CsvSingleFile',
-                 'input_directory' => dirname(__FILE__) . '/assets/csv/inputvalidators/csvsinglefile',
+                 'input_directory' => $this->asset_base_dir . '/csv/inputvalidators/csvsinglefile',
                  'file_name_field' => 'File',
             ),
             'LOGGING' => array(
@@ -36,7 +53,7 @@ class CsvInputValidatorsTest extends \PHPUnit_Framework_TestCase
                 'path_to_validator_log' => $this->path_to_input_validator_log,
             ),
         );
-        $inputValidator = new \mik\inputvalidators\CsvSingleFile($settings);
+        $inputValidator = new CsvSingleFile($settings);
         $inputValidator->validateAll();
         $log_file_entries = file($this->path_to_input_validator_log);
         $this->assertContains('"record ID":"04"', $log_file_entries[0], "CSV Single File input validator did not work");
@@ -44,14 +61,14 @@ class CsvInputValidatorsTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @group inputvalidators
+     * @covers \mik\inputvalidators\CsvCompound
      */
     public function testCsvCompoundInputValidator()
     {
         $settings = array(
             'FETCHER' => array(
                 'use_cache' => false,
-                'input_file' => dirname(__FILE__) . '/assets/csv/inputvalidators/csvcompound/input.csv',
+                'input_file' => $this->asset_base_dir . '/csv/inputvalidators/csvcompound/input.csv',
                 'temp_directory' => $this->path_to_temp_dir,
                 'record_key' => 'Identifier',
             ),
@@ -59,7 +76,7 @@ class CsvInputValidatorsTest extends \PHPUnit_Framework_TestCase
                  'validate_input' => true,
                  'validate_input_type' => 'strict',
                  'class' => 'CsvCompound',
-                 'input_directory' => dirname(__FILE__) . '/assets/csv/inputvalidators/csvcompound/files',
+                 'input_directory' => $this->asset_base_dir . '/csv/inputvalidators/csvcompound/files',
                  'compound_directory_field' => 'Directory'
             ),
             'LOGGING' => array(
@@ -68,7 +85,7 @@ class CsvInputValidatorsTest extends \PHPUnit_Framework_TestCase
             ),
         );
 
-        $inputValidator = new \mik\inputvalidators\CsvCompound($settings);
+        $inputValidator = new CsvCompound($settings);
         $inputValidator->validateAll();
         $log_file_entries = file($this->path_to_input_validator_log);
         $this->assertCount(5, $log_file_entries, "CSV Compound input validator log has the wrong number of entries");
@@ -96,14 +113,14 @@ class CsvInputValidatorsTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @group inputvalidators
+     * @covers \mik\inputvalidators\CsvNewspapers
      */
     public function testCsvNewspapersInputValidator()
     {
         $settings = array(
             'FETCHER' => array(
                 'use_cache' => false,
-                'input_file' => dirname(__FILE__) . '/assets/csv/inputvalidators/csvnewspapers/input.csv',
+                'input_file' => $this->asset_base_dir . '/csv/inputvalidators/csvnewspapers/input.csv',
                 'temp_directory' => $this->path_to_temp_dir,
                 'record_key' => 'Identifier',
             ),
@@ -111,11 +128,11 @@ class CsvInputValidatorsTest extends \PHPUnit_Framework_TestCase
                  'validate_input' => true,
                  'validate_input_type' => 'strict',
                  'class' => 'CsvNewspapers',
-                 'input_directory' => dirname(__FILE__) . '/assets/csv/inputvalidators/csvnewspapers/files',
+                 'input_directory' => $this->asset_base_dir . '/csv/inputvalidators/csvnewspapers/files',
                  'file_name_field' => 'Directory',
             ),
             'WRITER' => array(
-                'log_missing_ocr_files' => TRUE,
+                'log_missing_ocr_files' => true,
             ),
             'LOGGING' => array(
                 'path_to_log' => $this->path_to_log,
@@ -123,7 +140,7 @@ class CsvInputValidatorsTest extends \PHPUnit_Framework_TestCase
             ),
         );
 
-        $inputValidator = new \mik\inputvalidators\CsvNewspapers($settings);
+        $inputValidator = new CsvNewspapers($settings);
         $inputValidator->validateAll();
         $log_file_entries = file($this->path_to_input_validator_log);
         $this->assertCount(6, $log_file_entries, "CSV Newspapers input validator log has the wrong number of entries");
@@ -150,14 +167,15 @@ class CsvInputValidatorsTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @group inputvalidators
+
+     * @covers \mik\inputvalidators\CsvBooks
      */
     public function testCsvBooksInputValidator()
     {
         $settings = array(
             'FETCHER' => array(
                 'use_cache' => false,
-                'input_file' => dirname(__FILE__) . '/assets/csv/inputvalidators/csvbooks/input.csv',
+                'input_file' => $this->asset_base_dir . '/csv/inputvalidators/csvbooks/input.csv',
                 'temp_directory' => $this->path_to_temp_dir,
                 'record_key' => 'Identifier',
             ),
@@ -165,7 +183,7 @@ class CsvInputValidatorsTest extends \PHPUnit_Framework_TestCase
                  'validate_input' => true,
                  'validate_input_type' => 'strict',
                  'class' => 'CsvBooks',
-                 'input_directory' => dirname(__FILE__) . '/assets/csv/inputvalidators/csvbooks/files',
+                 'input_directory' => $this->asset_base_dir . '/csv/inputvalidators/csvbooks/files',
                  'file_name_field' => 'Directory',
             ),
             'LOGGING' => array(
@@ -174,7 +192,7 @@ class CsvInputValidatorsTest extends \PHPUnit_Framework_TestCase
             ),
         );
 
-        $inputValidator = new \mik\inputvalidators\CsvBooks($settings);
+        $inputValidator = new CsvBooks($settings);
         $inputValidator->validateAll();
         $log_file_entries = file($this->path_to_input_validator_log);
         $this->assertCount(5, $log_file_entries, "CSV Books input validator log has the wrong number of entries");
@@ -199,17 +217,5 @@ class CsvInputValidatorsTest extends \PHPUnit_Framework_TestCase
             $log_file_entries[4],
             "CSV Books input validator did not detect empty book-level directory"
         );
-    }
-    
-    protected function tearDown()
-    {
-        // Since we are running these validation tests in 'strict' mode, we
-        // do not write any ouput files other than the validator log, which
-        // we write to the temp directory.
-        $temp_files = glob($this->path_to_temp_dir . '/*');
-        foreach ($temp_files as $temp_file) {
-            @unlink($temp_file);
-        }
-        @rmdir($this->path_to_temp_dir);
     }
 }
