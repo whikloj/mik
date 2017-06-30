@@ -31,15 +31,6 @@ class FileFetcher extends Fetcher
     private $recurse_directories;
 
     /**
-     * Array of objects collected.
-     *
-     * Keys are 'filename' and 'fullpath'
-     *
-     * @var array
-     */
-    private $file_listing = null;
-
-    /**
      * Is this a Mac, so we disregard .DS_Store files.
      *
      * @var bool
@@ -73,7 +64,7 @@ class FileFetcher extends Fetcher
      */
     public function getItemInfo($recordKey)
     {
-        $files = $this->getFileList();
+        $files = $this->getFileList((!$this->use_cache));
         if (!array_key_exists($recordKey, $files)) {
             $msg = sprintf("Key %s not found in file listing.", $recordKey);
             $this->log->error($msg);
@@ -87,7 +78,7 @@ class FileFetcher extends Fetcher
      */
     public function getRecords($limit = null)
     {
-        $files = $this->getFileList();
+        $files = $this->getFileList((!$this->use_cache));
         if (!is_null($limit) && is_numeric($limit)) {
             return array_slice($files, 0, $limit);
         }
@@ -104,11 +95,12 @@ class FileFetcher extends Fetcher
      */
     private function getFileList($force = false)
     {
-        if (is_null($this->file_listing) || $force) {
+        static $file_listing;
+        if (!isset($file_listing) || $force) {
             $files = $this->iterateDirectory($this->source_directory);
-            $this->file_listing = $files;
+            $file_listing = $files;
         }
-        return $this->file_listing;
+        return $file_listing;
     }
 
     /**

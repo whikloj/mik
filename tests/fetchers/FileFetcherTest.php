@@ -43,6 +43,7 @@ class FileFetcherTest extends TestCase
         $this->settings = [
             'FETCHER' => [
                 'source_directory' => realpath(dirname(__FILE__) . '/../assets/filefetcher'),
+                'use_cache' => false,
             ],
             'LOGGING' => [
                 'path_to_log' => $this->log_path,
